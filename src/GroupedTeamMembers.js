@@ -1,11 +1,69 @@
-const GroupedTeamMembers = () => {
+import { useState } from "react";
+
+const GroupedTeamMembers = ({ employees, selectedTeam, setTeam }) => {
+    const [groupedEmployees, setGroupedData] = useState(groupTeamMembers());
+
+    function groupTeamMembers() {
+        var teams = [];
+
+        var teamAMember = employees.filter(employee => employee.teamName === 'TeamA');
+        var teamA = { team: 'TeamA', members: teamAMember, collapsed: selectedTeam === 'TeamA' ? false : true };
+        teams.push(teamA);
+
+        var teamBMember = employees.filter(employee => employee.teamName === 'TeamB');
+        var teamB = { team: 'TeamB', members: teamBMember, collapsed: selectedTeam === 'TeamB' ? false : true };
+        teams.push(teamB);
+
+        var teamCMember = employees.filter(employee => employee.teamName === 'TeamC');
+        var teamC = { team: 'TeamC', members: teamCMember, collapsed: selectedTeam === 'TeamC' ? false : true };
+        teams.push(teamC);
+
+        var teamDMember = employees.filter(employee => employee.teamName === 'TeamD');
+        var teamD = { team: 'TeamD', members: teamDMember, collapsed: selectedTeam === 'TeamD' ? false : true };
+        teams.push(teamD);
+
+        return teams;
+    }
+
+    function handleTeamClick(e) {
+        var newGroupData = groupedEmployees.map(groupedData => groupedData.team === e.currentTarget.id
+            ? { ...groupedData, collapsed: !groupedData.collapsed }
+            : groupedData);
+        setGroupedData(newGroupData);
+        setTeam(e.currentTarget.id); // header need to change
+    }
+
     return (
         <main className="container">
-            <div className="row justify-content-center mt-3 mb-4">
-                <div className="rol-8">
-                    <h1>Grouped Team Members</h1>
-                </div>
-            </div>
+            {
+                groupedEmployees.map(item => (
+                    <div className="card mt-2" style={{ cursor: "pointer" }}>
+                        <h4
+                            id={item.team}
+                            className="card-header text-secondary bg-white"
+                            onClick={handleTeamClick}
+                        >
+                            Team Name: {item.team}
+                        </h4>
+                        <div
+                            id={"colllapse_" + item.team}
+                            className={item.collapsed === true ? "collapse" : ""}
+                        >
+                            <hr />
+                            {
+                                item.members.map(member => (
+                                    <div className="mt-2">
+                                        <h5 className="card-title mt-2">
+                                            <span className="text-dark">Full Name: {member.fullName}</span>
+                                        </h5>
+                                        <p>Designation: {member.designation}</p>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                ))
+            }
         </main>
     )
 }
